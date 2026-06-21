@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="theme-color" content="#060205">
+  <title>For Aanchu 🤍</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;1,9..40,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       DESIGN TOKENS
+       ============================================================ */
+    :root {
+      --bg-deepest:  #060205;
+      --bg-dark:     #0E0609;
+      --bg-mid:      #160B0F;
+      --rose-pale:   #F5D0DC;
+      --rose-soft:   #DFA8BE;
+      --rose-warm:   #B86080;
+      --rose-deep:   #8A3352;
+      --gold:        #C8A45A;
+      --gold-light:  #E4CC90;
+      --txt-bright:  #F8F0F2;
+      --txt-soft:    #D0B0BC;
+      --txt-muted:   #705060;
+      --divider:     rgba(200,164,90,0.25);
+    }
+
+    /* ============================================================
+       RESET
+       ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      background: var(--bg-deepest);
+      color: var(--txt-bright);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ============================================================
+       KEYFRAMES
+       ============================================================ */
+    @keyframes hb-draw   { to { stroke-dashoffset: 0; } }
+    @keyframes hb-fade   { 0%,70%{opacity:1} 100%{opacity:0} }
+    @keyframes name-in   { from{opacity:0;letter-spacing:.4em} to{opacity:1;letter-spacing:.06em} }
+    @keyframes fade-up   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fade-in   { from{opacity:0} to{opacity:1} }
+    @keyframes bob       { 0%,100%{transform:translateY(0);opacity:.5} 50%{transform:translateY(7px);opacity:1} }
+    @keyframes bar-wave  { 0%,100%{transform:scaleY(.3)} 50%{transform:scaleY(1)} }
+    @keyframes drift-up  {
+      0%  { transform:translateY(0) translateX(0); opacity:0; }
+      10% { opacity:.6; }
+      90% { opacity:.2; }
+      100%{ transform:translateY(-70vh) translateX(var(--dx)); opacity:0; }
+    }
+    @keyframes pulse-hrt { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+    @keyframes blink     { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+    @keyframes line-grow { from{width:0} to{width:60px} }
+
+    /* ============================================================
+       SCROLL REVEALS
+       ============================================================ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .75s ease, transform .75s ease;
+    }
+    .reveal.d1 { transition-delay:.12s }
+    .reveal.d2 { transition-delay:.24s }
+    .reveal.d3 { transition-delay:.36s }
+    .reveal.d4 { transition-delay:.50s }
+    .reveal.show { opacity:1; transform:translateY(0); }
+
+    /* ============================================================
+       AMBIENT DUST (particles)
+       ============================================================ */
+    #dust {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    .mote {
+      position: absolute; border-radius: 50%;
+      background: var(--rose-soft);
+      animation: drift-up linear infinite; opacity: 0;
+    }
+
+    /* ============================================================
+       SECTION 1 — OPENER
+       ============================================================ */
+    #opener {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 48px 24px 100px;
+      text-align: center;
+    }
+
+    #hb-svg {
+      width: min(300px, 88vw); height: 56px;
+      margin-bottom: 44px;
+      opacity: 1; 
+      transition: opacity .3s ease;
+    }
+    #hb-svg path {
+      stroke: var(--rose-deep); stroke-width: 2; fill: none;
+      stroke-dasharray: 900; stroke-dashoffset: 900;
+      animation: hb-draw 3s forwards ease-in-out;
+    }
+
+    .opener-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(60px,18vw,96px);
+      letter-spacing: .06em;
+      color: var(--rose-pale);
+      line-height: 1;
+      animation: name-in 1.5s forwards ease;
+    }
+    .opener-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(16px,5vw,21px);
+      color: var(--txt-muted);
+      margin-top: 18px;
+      animation: fade-in 2s forwards ease 0.5s;
+    }
+    .scroll-cue {
+      position: absolute; bottom: 40px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: bob 2.2s ease infinite, fade-in 2s forwards ease 1s;
+    }
+    .scroll-cue-line {
+      width: 1px; height: 34px;
+      background: linear-gradient(to bottom, var(--rose-deep), transparent);
+    }
+    .scroll-cue span {
+      font-size: 10px; letter-spacing:.2em;
+      text-transform: uppercase; color: var(--txt-muted);
+    }
+
+    /* ============================================================
+       SECTION 2 — THE APOLOGY
+       ============================================================ */
+    #apology {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 32px;
+      background: var(--bg-dark);
+      text-align: center;
+    }
+    .apology-inner { max-width: 360px; }
+
+    .apology-eyebrow {
+      font-size: 10px; letter-spacing:.22em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 30px;
+    }
+    .apology-l2 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(16px,5vw,24px);
+      color: var(--txt-soft); line-height: 1.5;
+      margin-bottom: 12px;
+      white-space: pre-line;
+    }
+    .apology-l3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(15px,4.5vw,20px);
+      color: var(--gold);
+      margin-bottom: 40px;
+    }
+    .apology-rule {
+      width: 44px; height: 1px;
+      background: var(--divider);
+      margin: 0 auto 30px;
+    }
+    .apology-body {
+      font-size: 14.5px; color: var(--txt-soft);
+      line-height: 1.85; font-style: italic;
+    }
+
+    /* ============================================================
+       SECTION 3 — ONE YEAR
+       ============================================================ */
+    #one-year {
+      position: relative; z-index: 1;
+      display: flex; flex-direction: column;
+      background: var(--bg-deepest);
+    }
+    .yr-top {
+      padding: 80px 32px 44px;
+      text-align: center;
+    }
+    .yr-label {
+      font-size: 10px; letter-spacing:.22em;
+      text-transform: uppercase; color: var(--rose-warm);
+      margin-bottom: 20px;
+    }
+    .yr-num {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(88px,26vw,152px);
+      line-height: 1; color: var(--txt-bright);
+      position: relative; display: inline-block;
+    }
+    .yr-num::after {
+      content:'';
+      position: absolute; bottom: -6px; left: 50%;
+      transform: translateX(-50%);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .yr-unit {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(20px,6.5vw,32px);
+      color: var(--rose-soft); margin-top: 10px;
+    }
+
+    .couple-frame {
+      flex: 1; min-height: clamp(320px, 75vw, 500px);
+      position: relative; overflow: hidden;
+      background:
+        url('couple.png') center/cover no-repeat,
+        linear-gradient(160deg, #060205 0%, #160B0F 100%);
+    }
+    .couple-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(6,2,5,.85) 0%,
+        rgba(6,2,5,.10) 65%,
+        rgba(6,2,5,.00) 100%
+      );
+      display: flex; align-items: flex-end;
+      padding: 24px;
+    }
+    .couple-caption {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(15px,4.5vw,18px);
+      color: var(--txt-soft); line-height: 1.55;
+      max-width: 280px;
+    }
+
+    /* ============================================================
+       SECTION 4 — YOU & ME
+       ============================================================ */
+    #you-me {
+      position: relative; z-index: 1;
+      padding: 80px 28px 80px;
+      background: var(--bg-mid);
+      text-align: center;
+    }
+    .ym-eyebrow {
+      font-size: 10px; letter-spacing:.22em;
+      text-transform: uppercase; color: var(--txt-muted);
+      margin-bottom: 48px;
+    }
+    .photo-pair {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; max-width: 340px; margin: 0 auto 36px;
+    }
+    .photo-card {
+      position: relative; border-radius: 4px;
+      overflow: hidden; aspect-ratio: 3/4;
+    }
+    .photo-card.him {
+      background:
+        url('him.jpg') center/cover no-repeat,
+        linear-gradient(160deg, #1A0810 0%, #3A1828 100%);
+    }
+    .photo-card.her {
+      background:
+        url('her.jpg') center/cover no-repeat,
+        linear-gradient(160deg, #100815 0%, #281435 100%);
+    }
+    .photo-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 28px 12px 12px;
+      background: linear-gradient(to top, rgba(0,0,0,.80), transparent);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 21px;
+      color: var(--rose-pale); text-align: center;
+    }
+    .ym-connector {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(24px,7.5vw,40px);
+      color: var(--gold); margin-bottom: 14px;
+    }
+    .ym-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(15px,5vw,20px);
+      color: var(--txt-soft);
+    }
+
+    /* ============================================================
+       SECTION 5 — THE LETTER
+       ============================================================ */
+    #letter {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      background: var(--bg-dark);
+      padding: 80px 32px 80px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .ltr-header { text-align: center; margin-bottom: 56px; }
+    .ltr-eyebrow {
+      font-size: 10px; letter-spacing:.22em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .ltr-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(28px,8.5vw,42px);
+      color: var(--rose-pale); line-height: 1.2;
+    }
+    .ltr-rule {
+      width: 44px; height: 1px;
+      background: var(--divider); margin: 18px auto 0;
+    }
+    .ltr-body { max-width: 390px; width: 100%; }
+
+    #msg-text {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 15px; font-weight: 300;
+      color: var(--txt-soft); line-height: 1.95;
+    }
+
+    .msg-cursor {
+      display: inline-block; width: 2px; height: 14px;
+      background: var(--rose-soft); vertical-align: middle;
+      margin-left: 2px; animation: blink .85s step-start infinite;
+    }
+
+    .ltr-signoff {
+      margin-top: 44px;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 20px;
+      color: var(--rose-warm); text-align: right;
+      opacity: 0; transition: opacity .8s ease;
+    }
+    .ltr-signoff.show { opacity: 1; }
+
+    /* ============================================================
+       SECTION 6 — CLOSING
+       ============================================================ */
+    #closing {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      background: var(--bg-deepest);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 80px 32px 140px;
+      text-align: center;
+    }
+    .cl-date {
+      font-size: 10px; letter-spacing:.25em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 56px;
+    }
+    .cl-heart {
+      font-size: 36px; display: block; margin-bottom: 36px;
+      animation: pulse-hrt 1.8s ease infinite;
+    }
+    .cl-line1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300; font-style: italic;
+      font-size: clamp(20px,6.5vw,30px);
+      color: var(--txt-soft); margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .cl-hero {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: clamp(34px,10vw,54px);
+      color: var(--rose-pale); line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .cl-hero em { font-style: italic; color: var(--gold-light); }
+    .cl-name {
+      display: block;
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(48px,15vw,80px);
+      color: var(--rose-soft); line-height: 1;
+      margin-bottom: 44px;
+    }
+    .cl-sub {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-weight: 300;
+      font-size: clamp(14px,4.5vw,18px);
+      color: var(--txt-muted); line-height: 1.75;
+      max-width: 300px; margin-bottom: 60px;
+    }
+    .cl-tail {
+      width: 1px; height: 64px;
+      background: linear-gradient(to bottom, var(--divider), transparent);
+    }
+
+    /* ============================================================
+       MUSIC PLAYER
+       ============================================================ */
+    #player {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(6,2,5,.93);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-top: 1px solid rgba(200,164,90,.12);
+      padding: 11px 18px;
+      display: flex; align-items: center; gap: 13px;
+    }
+    #play-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid var(--rose-deep);
+      background: transparent; color: var(--rose-pale);
+      cursor: pointer; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s;
+    }
+    #play-btn:active { background: rgba(200,100,130,.15); }
+    .bars {
+      display: flex; align-items: flex-end;
+      gap: 3px; height: 18px; flex-shrink: 0;
+    }
+    .bar {
+      width: 3px; border-radius: 2px;
+      background: var(--rose-warm);
+      transform-origin: bottom; transform: scaleY(.3);
+    }
+    .bar:nth-child(1) { height: 12px; }
+    .bar:nth-child(2) { height: 18px; }
+    .bar:nth-child(3) { height: 14px; }
+    .bar:nth-child(4) { height: 16px; }
+    .bar:nth-child(5) { height: 10px; }
+    .bars.on .bar:nth-child(1) { animation: bar-wave .6s ease infinite 0s; }
+    .bars.on .bar:nth-child(2) { animation: bar-wave .6s ease infinite .15s; }
+    .bars.on .bar:nth-child(3) { animation: bar-wave .6s ease infinite .05s; }
+    .bars.on .bar:nth-child(4) { animation: bar-wave .6s ease infinite .22s; }
+    .bars.on .bar:nth-child(5) { animation: bar-wave .6s ease infinite .10s; }
+    .player-info { flex: 1; min-width: 0; }
+    .player-title {
+      font-size: 13px; color: var(--txt-bright);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .player-hint { font-size: 11px; color: var(--txt-muted); font-style: italic; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="dust"></div>
+
+<audio id="bgm" loop>
+  <source src="tum-se-hi.m4a" type="audio/mpeg">
+</audio>
+
+<section id="opener">
+  <svg id="hb-svg" viewBox="0 0 300 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path id="hb-path" d="M0,28 L60,28 L72,28 L80,10 L88,46 L96,18 L104,38 L112,25 L120,28 L240,28 L300,28"/>
+  </svg>
+  <h1 class="opener-name" id="opener-name">Aanchu!</h1>
+  <p class="opener-sub" id="opener-sub">sun to sahi, ek baat kehni thi...</p>
+  <div class="scroll-cue" id="scroll-cue">
+    <div class="scroll-cue-line"></div>
+    <span>scroll</span>
+  </div>
+</section>
+
+<section id="apology">
+  <div class="apology-inner">
+    <p class="apology-eyebrow reveal">main jaanta hun</p>
+    <p class="reveal d1" style="font-size: 14px; color: var(--rose-soft); margin-bottom: 12px; font-style: italic;">M bhool gya tha and I am really sorry for that🫠</p>
+    <p class="apology-l2 reveal d3">lekin apko nhi sirf date ko🫠... <br>I know it's not ordinary date<br>Sorry 😔</p>
+    <h3 class="apology-l3 reveal d4">Dono m frk h na bby 🫠</h3>
+    <div class="apology-rule reveal d4"></div>
+    <p class="apology-body reveal d4">
+      Ap meri life s kbhi nhi gye or na hi meri memory s..<br>
+      Lekin is bar glti hogyi 🫠<br>
+      Or yaha m excuse dene k lie aya bhi nhi hu🫠<br>
+      But to correct my mistakes..
+    </p>
+  </div>
+</section>
+
+<section id="one-year">
+  <div class="yr-top">
+    <p class="yr-label reveal">21 June 2025 · 21 June 2026</p>
+    <div class="yr-num reveal d1" id="yr-counter">365</div>
+    <p class="yr-unit reveal d2">din. ek saal. hum.</p>
+  </div>
+  <div class="couple-frame">
+    <div class="couple-overlay">
+      <p class="couple-caption reveal">
+        "Ek saal ho gaya.<br>
+        Aur abhi bhi yahan hun.<br>
+        Aur yahan hi rahunga."
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="you-me">
+  <p class="ym-eyebrow reveal">do alag log. ek ajab si cheez.</p>
+  <div class="photo-pair">
+    <div class="photo-card him reveal d1">
+      <div class="photo-label">main</div>
+    </div>
+    <div class="photo-card her reveal d2">
+      <div class="photo-label">ap</div>
+    </div>
+  </div>
+  <p class="ym-connector reveal d3">→ hum ←</p>
+  <p class="ym-sub reveal d4">aur yeh hum... kuch alag hi hai.</p>
+</section>
+
+<section id="letter">
+  <div class="ltr-header">
+    <p class="ltr-eyebrow reveal">kuch kehna tha</p>
+    <h2 class="ltr-title reveal d1">apko dil s ❤️😔</h2>
+    <div class="ltr-rule reveal d2"></div>
+  </div>
+
+  <div class="ltr-body">
+    <p id="msg-text">
+      Hey,<br>
+      I've been thinking about today and I feel sad about it🫠. I forgot our first anniversary. And I hate myself for it.😔<br><br>
+      This was suppose to be special. This day was suppose to remind us of how we started, how far we've come, how much we mean to each other. But, I ruined it. And you had to spend this special day in feeling of forgotten and sad also hurt because of me.🫠<br><br>
+      I know how much this meant to you. I saw it in your eyes on the ground. And I feel like what have I done i felt like terrorist who broke your heart badly 🫠 I should made a plan, made you feel celebrated, made you feel loved. But I didnt. I failed🫠 And I'm so sorry.😔<br><br>
+      Yuhin hamesha saath rehna...
+    </p>
+    <div class="ltr-signoff">~ humesha tumhara</div>
+  </div>
+</section>
+
+<section id="closing">
+  <p class="cl-date reveal">21 . 06 . 2026</p>
+  <span class="cl-heart reveal d1">❤️</span>
+  <p class="cl-line1 reveal d2">maaf kr dena agar ho sake,</p>
+  <h2 class="cl-hero reveal d3">Happy <em>Anniversary</em></h2>
+  <span class="cl-name reveal d4">Aanchu</span>
+  <p class="cl-sub reveal d4">I promise to make things right. Always.</p>
+  <div class="cl-tail reveal d4"></div>
+</section>
+
+<div id="player">
+  <button id="play-btn" aria-label="Play music">▶</button>
+  <div class="bars" id="music-bars">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+  <div class="player-info">
+    <p class="player-title">Tum Se Hi</p>
+    <p class="player-hint">Touch play to listen</p>
+  </div>
+</div>
+
+<script>
+  // Setup reveal elements on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting) {
+        entry.target.classList.add('show');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(r => observer.observe(r));
+
+  // Audio Player Logic
+  const bgm = document.getElementById('bgm');
+  const playBtn = document.getElementById('play-btn');
+  const musicBars = document.getElementById('music-bars');
+
+  playBtn.addEventListener('click', () => {
+    if (bgm.paused) {
+      bgm.play().then(() => {
+        playBtn.textContent = '⏸';
+        musicBars.classList.add('on');
+      }).catch(err => console.log("Audio play blocked", err));
+    } else {
+      bgm.pause();
+      playBtn.textContent = '▶';
+      musicBars.classList.remove('on');
+    }
+  });
+
+  // Background Ambient Particles (Looping)
+  const dustContainer = document.getElementById('dust');
+  function createMote() {
+    const mote = document.createElement('div');
+    mote.classList.add('mote');
+    
+    const size = Math.random() * 4 + 2;
+    mote.style.width = `${size}px`;
+    mote.style.height = `${size}px`;
+    
+    mote.style.left = `${Math.random() * 100}vw`;
+    mote.style.bottom = `-10px`;
+    
+    const duration = Math.random() * 6 + 6;
+    mote.style.animationDuration = `${duration}s`;
+    mote.style.setProperty('--dx', `${Math.random() * 40 - 20}px`);
+    
+    dustContainer.appendChild(mote);
+    
+    setTimeout(() => {
+      mote.remove();
+    }, duration * 1000);
+  }
+
+  // Continuous generation loop
+  setInterval(createMote, 300);
+</script>
+
+</body>
+</html>
